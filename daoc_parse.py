@@ -40,7 +40,7 @@ def parse_money(openFile):
         print "Net income: "+ str(net_income[0]) + 'p ' + str(net_income[1]) + 'g ' + str(net_income[2]) + 's ' + str(net_income[3]) + 'c'
 
 
-## Prints out lines for gold loot picked up. Needs extension to parse specific amounts.
+## Prints out lines for gold loot picked up from mobs.
 def parse_gold_loot(openFile):
     money_looted = 0
     for line in openFile:
@@ -124,7 +124,7 @@ def parse_defense(openFile):
            "\nHits taken: " + str(hits_taken)) + "\n\tHit %: " + str((float(hits_taken))/(float(total_attacks))) + "\n"
 
 
-## Prints out results of parse_combat and parse_crit, and also the % of crits.
+## Executes parse_combat, parse_crit, and parse_defense.
 def parse_allCombat(openFile):
     hit_count = parse_combat(openFile)
     openFile.seek(0)
@@ -133,12 +133,14 @@ def parse_allCombat(openFile):
     openFile.seek(0)
     parse_defense(openFile)
 
+## Executes parse_money and parse_gold_loot.
 def parse_allMoney(openFile):
     parse_money(openFile)
     print "\n"
     openFile.seek(0)
     parse_gold_loot(openFile)
 
+## Executes parse_allCombat and parse_allMoney.
 def parse_all(openFile):
     print "Combat statistics: "
     parse_allCombat(openFile)
