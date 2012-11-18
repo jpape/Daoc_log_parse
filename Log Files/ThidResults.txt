@@ -1,0 +1,27 @@
+Combat statistics: 
+# of melee hits: 15
+# nukes landed: 131
+# nukes resisted: 27
+
+# of crits: 16
+Crit %: 0.109589041096
+
+Total attacks received: 158
+Block count: 0
+	Block %: 0.0
+Parry count: 0
+	Parry %: 0.0
+Evade Count 0
+	Evade %: 0.0
+Miss count: 19
+	Miss %: 0.120253164557
+Hits taken: 139
+	Hit %: 0.879746835443
+
+Financial statistics: 
+Money gained: 0p 0g 0s 0c
+Money spent: 0p 0g 0s 0c
+Net income: 0p 0g 0s 0c
+
+
+Total loot money: 0p 111g 71s 76c

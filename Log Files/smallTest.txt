@@ -1,0 +1,135 @@
+[18:54:11]  To stop logging, type /chatlog again.
+[18:54:12] You enter combat mode and target [the cave trow]
+[18:54:12] The cave trow is too far away to attack!
+[18:54:13] You attack the cave trow with your Grim Maul and hit for 99 damage!
+[18:54:13] The cave trow attacks you and you block the blow!
+[18:54:16] You attack the cave trow with your Grim Maul and hit for 83 damage!
+[18:54:17] The cave trow attacks you and you block the blow!
+[18:54:18] @@[Trade] Gawdzilla (50, Skald in Jordheim): "wtb df dia necklace!"
+[18:54:20] You attack the cave trow with your Grim Maul and hit for 97 damage!
+[18:54:21] The cave trow hits your torso for 68 (-41) damage!
+[18:54:23] You attack the cave trow with your Grim Maul and hit for 96 damage!
+[18:54:24] The cave trow attacks you and you block the blow!
+[18:54:27] You attack the cave trow with your Grim Maul and hit for 95 damage!
+[18:54:27] You hit the cave trow for 74 damage!
+[18:54:27] You steal 74 hit points.
+[18:54:28] Your melee buffer absorbs 25 damage!
+[18:54:28] The cave trow hits your arm for 25 (-30) damage!
+[18:54:30] You attack the cave trow with your Grim Maul and hit for 89 damage!
+[18:54:32] The cave trow attacks you and you parry the blow!
+[18:54:34] You attack the cave trow with your Grim Maul and hit for 103 damage!
+[18:54:35] The cave trow attacks you and you block the blow!
+[18:54:38] You attack the cave trow with your Grim Maul and hit for 100 damage!
+[18:54:39] The cave trow attacks you and you block the blow!
+[18:54:41] You attack the cave trow with your Grim Maul and hit for 103 damage!
+[18:54:43] Your melee buffer absorbs 30 damage!
+[18:54:43] The cave trow hits your leg for 31 (-36) damage!
+[18:54:45] You attack the cave trow with your Grim Maul and hit for 106 damage!
+[18:54:46] The cave trow attacks you and you block the blow!
+[18:54:49] You attack the cave trow with your Grim Maul and hit for 95 damage!
+[18:54:50] The cave trow attacks you and you parry the blow!
+[18:54:51] @@[LFG] Porro (46, Skald in Vale of Mularn): "xp"
+[18:54:52] You attack the cave trow with your Grim Maul and hit for 87 damage!
+[18:54:52] You critical hit the cave trow for an additional 32 damage!
+[18:54:54] The cave trow attacks you and you parry the blow!
+[18:54:56] You attack the cave trow with your Grim Maul and hit for 82 damage!
+[18:54:58] The cave trow attacks you and you parry the blow!
+[18:54:59] You attack the cave trow with your Grim Maul and hit for 108 damage!
+[18:55:02] Your melee buffer absorbs 20 damage!
+[18:55:02] The cave trow hits your arm for 39 (-36) damage!
+[18:55:03] You attack the cave trow with your Grim Maul and hit for 99 damage!
+[18:55:05] The cave trow attacks you and you block the blow!
+[18:55:06] You attack the cave trow with your Grim Maul and hit for 95 damage!
+[18:55:09] The cave trow attacks you and you block the blow!
+[18:55:10] You attack the cave trow with your Grim Maul and hit for 85 damage!
+[18:55:13] The cave trow hits your leg for 64 (-39) damage!
+[18:55:13] @@[Trade] Alanya (50, Shadowblade in Arothi): "wts black and red temple axe, suket hymn, bloodmist belt"
+[18:55:13] You attack the cave trow with your Grim Maul and hit for 106 damage!
+[18:55:13] The cave trow drops a bag of coins.
+[18:55:13] The cave trow drops a cursed ekyps control orb.
+[18:55:13] The cave trow drops a small chest.
+[18:55:13] You pick up 75 silver and 66 copper pieces.
+[18:55:13] You get a cursed ekyps control orb and put it in your backpack.
+[18:55:13] You pick up 1 gold, 16 silver and 98 copper pieces.
+[18:55:13] The cave trow dies!
+[18:55:13] You get 75,497,472 experience points.(33,554,432 camp bonus)
+[18:55:13] You gain 9,059,696 bonus experience due to successful activities of your realm in the frontiers
+[18:55:15] @@[LFG] Alanya (50, Shadowblade in Arothi): "wtt money from here to hib"
+[18:55:26] You target [the cave trow].
+[18:55:26] You enter combat mode and target [the cave trow]
+[18:55:26] You attack the cave trow with your Grim Maul and hit for 112 damage!
+[18:55:26] You hit the cave trow for 73 damage!
+[18:55:26] You steal 73 hit points.
+[18:55:26] The cave trow attacks you and you block the blow!
+[18:55:26] You already have that effect. Wait until it expires.  Spell failed.
+[18:55:30] You attack the cave trow with your Grim Maul and hit for 102 damage!
+[18:55:30] You hit the cave trow for 61 damage!
+[18:55:30] You steal 61 hit points.
+[18:55:30] The cave trow attacks you and you parry the blow!
+[18:55:33] You attack the cave trow with your Grim Maul and hit for 111 damage!
+[18:55:34] You critical hit the cave trow for an additional 92 damage!
+[18:55:34] The cave trow attacks you and you parry the blow!
+[18:55:37] You attack the cave trow with your Grim Maul and hit for 91 damage!
+[18:55:37] You critical hit the cave trow for an additional 60 damage!
+[18:55:38] The cave trow attacks you and you parry the blow!
+[18:55:40] You attack the cave trow with your Grim Maul and hit for 113 damage!
+[18:55:41] The cave trow attacks you and you block the blow!
+[18:55:42] You already have that effect. Wait until it expires.  Spell failed.
+[18:55:44] You attack the cave trow with your Grim Maul and hit for 107 damage!
+[18:55:44] You critical hit the cave trow for an additional 89 damage!
+[18:55:45] The cave trow attacks you and misses!
+[18:55:47] You attack the cave trow with your Grim Maul and hit for 97 damage!
+[18:55:47] You hit the cave trow for 74 damage!
+[18:55:47] You steal 74 hit points.
+[18:55:49] The cave trow attacks you and you parry the blow!
+[18:55:51] You attack the cave trow with your Grim Maul and hit for 101 damage!
+[18:55:53] The cave trow attacks you and you block the blow!
+[18:55:55] You attack the cave trow with your Grim Maul and hit for 93 damage!
+[18:55:56] The cave trow attacks you and you parry the blow!
+[18:55:58] You attack the cave trow with your Grim Maul and hit for 110 damage!
+[18:56:00] The cave trow attacks you and misses!
+[18:56:02] You attack the cave trow with your Grim Maul and hit for 87 damage!
+[18:56:04] The cave trow attacks you and you block the blow!
+[18:56:04] You already have that effect. Wait until it expires.  Spell failed.
+[18:56:05] You attack the cave trow with your Grim Maul and hit for 110 damage!
+[18:56:07] The cave trow attacks you and you parry the blow!
+[18:56:09] You attack the cave trow with your Grim Maul and hit for 83 damage!
+[18:56:09] You hit the cave trow for 63 damage!
+[18:56:09] The cave trow drops a bag of coins.
+[18:56:09] You pick up 72 silver and 40 copper pieces.
+[18:56:09] The cave trow dies!
+[18:56:09] You get 75,497,472 experience points.(33,554,432 camp bonus)
+[18:56:09] You gain 9,059,696 bonus experience due to successful activities of your realm in the frontiers
+[18:56:09] You cannot absorb any more life.
+[18:56:10] @@[Alliance] Sustineo: "zerk, sham, or rm for rvr :)"
+[18:56:12] You target [the cave trow].
+[18:56:12] You examine the cave trow. It is aggressive towards you!
+[18:56:13] You enter combat mode and target [the cave trow]
+[18:56:13] You attack the cave trow with your Grim Maul and hit for 91 damage!
+[18:56:13] The cave trow attacks you and you parry the blow!
+[18:56:16] You attack the cave trow with your Grim Maul and hit for 93 damage!
+[18:56:17] The cave trow attacks you and you block the blow!
+[18:56:20] You attack the cave trow with your Grim Maul and hit for 102 damage!
+[18:56:21] The cave trow attacks you and you block the blow!
+[18:56:23] You attack the cave trow with your Grim Maul and hit for 102 damage!
+[18:56:25] Your melee buffer absorbs 26 damage!
+[18:56:25] The cave trow hits your torso for 26 (-31) damage!
+[18:56:27] You attack the cave trow with your Grim Maul and hit for 99 damage!
+[18:56:27] You hit the cave trow for 61 damage!
+[18:56:27] You steal 26 hit points.
+[18:56:28] The cave trow attacks you and you parry the blow!
+[18:56:30] You attack the cave trow with your Grim Maul and hit for 85 damage!
+[18:56:32] The cave trow attacks you and you parry the blow!
+[18:56:34] You attack the cave trow with your Grim Maul and hit for 110 damage!
+[18:56:36] The cave trow attacks you and you block the blow!
+[18:56:37] @@[Guild] Hughx: "dark sm is the one that debuffs the runie damage or is it the other way around"
+[18:56:38] You attack the cave trow with your Grim Maul and hit for 102 damage!
+[18:56:39] The cave trow attacks you and you block the blow!
+[18:56:39] You already have that effect. Wait until it expires.  Spell failed.
+[18:56:41] You attack the cave trow with your Grim Maul and hit for 110 damage!
+[18:56:43] The cave trow attacks you and you parry the blow!
+[18:56:45] You attack the cave trow with your Grim Maul and hit for 114 damage!
+[18:56:47] The cave trow attacks you and you parry the blow!
+[18:56:48] You attack the cave trow with your Grim Maul and hit for 102 damage!
+[18:56:51] The cave trow attacks you and you block the blow!
+[18:56:52] You attack the cave trow with your Grim Maul and hit for 114 damage!
