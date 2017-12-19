@@ -1,6 +1,8 @@
 import sys
 
-global total_damage
+# from guizero import App, Text, CheckBox
+
+total_damage = 0
 
 ## Counts the money paid/received.
 def parse_money(openFile):
@@ -31,15 +33,14 @@ def parse_money(openFile):
                 money_spent += int(line[line.find('copper')-3:line.find('copper')-1])
     plus_money = currency_breakdown(money_gained)
     minus_money = currency_breakdown(money_spent)
-    print "Money gained: "+ str(plus_money[0]) + 'p ' + str(plus_money[1]) + 'g ' + str(plus_money[2]) + 's ' + str(plus_money[3]) + 'c'
-    print "Money spent: "+ str(minus_money[0]) + 'p ' + str(minus_money[1]) + 'g ' + str(minus_money[2]) + 's ' + str(minus_money[3]) + 'c'
+    print("Money gained: "+ str(plus_money[0]) + 'p ' + str(plus_money[1]) + 'g ' + str(plus_money[2]) + 's ' + str(plus_money[3]) + 'c')
+    print("Money spent: "+ str(minus_money[0]) + 'p ' + str(minus_money[1]) + 'g ' + str(minus_money[2]) + 's ' + str(minus_money[3]) + 'c')
     if plus_money > minus_money:
         net_income = currency_breakdown(money_gained-money_spent)
-        print "Net income: "+ str(net_income[0]) + 'p ' + str(net_income[1]) + 'g ' + str(net_income[2]) + 's ' + str(net_income[3]) + 'c'
+        print("Net income: "+ str(net_income[0]) + 'p ' + str(net_income[1]) + 'g ' + str(net_income[2]) + 's ' + str(net_income[3]) + 'c')
     else:
         net_income = currency_breakdown(money_spent-money_gained)
-        print "Net income: "+ str(net_income[0]) + 'p ' + str(net_income[1]) + 'g ' + str(net_income[2]) + 's ' + str(net_income[3]) + 'c'
-
+        print("Net income: "+ str(net_income[0]) + 'p ' + str(net_income[1]) + 'g ' + str(net_income[2]) + 's ' + str(net_income[3]) + 'c')
 
 ## Prints out lines for gold loot picked up from mobs.
 def parse_gold_loot(openFile):
@@ -58,7 +59,7 @@ def parse_gold_loot(openFile):
             if line.find('copper') != -1:
                 money_looted += int(line[line.find('copper')-3:line.find('copper')-1])
     total_loot = currency_breakdown(money_looted)
-    print "Loot money: "+ str(total_loot[0]) + 'p ' + str(total_loot[1]) + 'g ' + str(total_loot[2]) + 's ' + str(total_loot[3]) + 'c'
+    print("Loot money: "+ str(total_loot[0]) + 'p ' + str(total_loot[1]) + 'g ' + str(total_loot[2]) + 's ' + str(total_loot[3]) + 'c')
 
 ## Helper method to parse_money. Seperates 'total' into largest denominations and returns them in a list.
 def currency_breakdown(total):
@@ -77,16 +78,16 @@ def parse_melee_combat(openFile):
             if line.find('You attack') != -1 and line.find('with your') != -1:
                 hit_count += 1
                 damage_text = line[line.find('damage')-16:line.find('damage')]
-##                print str(damage_text)
+
                 if line.find('-') != -1 or line.find('+') != -1:
                     total_damage += int(damage_text.split()[len(damage_text.split())-2])
                 else:
                     total_damage += int(damage_text.split()[len(damage_text.split())-1])
-        print "# of melee hits: " +str(hit_count)
-        print '     Total damage dealt: ' + str(total_damage)
+        print("# of melee hits: " +str(hit_count))
+        print('     Total damage dealt: ' + str(total_damage))
         return hit_count
     except IndexError:
-        print str(line)
+        print(str(line))
         exit(0)
 
 def parse_caster_combat(openFile):
@@ -98,19 +99,19 @@ def parse_caster_combat(openFile):
             if line.find('You hit') != -1:
                 hit_count += 1
                 damage_text = line[line.find('damage')-16:line.find('damage')]
-##                print str(damage_text)
+
                 if line.find('-') != -1 or line.find('+') != -1:
                     total_damage += int(damage_text.split()[len(damage_text.split())-2])
                 else:
                     total_damage += int(damage_text.split()[len(damage_text.split())-1])
             if line.find('resists the effect') != -1:
                 resist_count += 1
-        print "# nukes landed: " + str(hit_count)
-        print "     Total damage: " + str(total_damage)
-        print "# nukes resisted: " + str(resist_count) + "\n"
+        print("# nukes landed: " + str(hit_count))
+        print("     Total damage: " + str(total_damage))
+        print("# nukes resisted: " + str(resist_count) + "\n")
         return hit_count
     except IndexError:
-        print str(line)
+        print(str(line))
         exit(0)
         
 ## Counts and returns the # of critical hits inflicted with either hand.
@@ -119,18 +120,17 @@ def parse_crit(openFile):
     for line in openFile:
         if line.find('You critical hit') != -1:
             crit_count += 1
-    print "# of crits: " + str(crit_count)
+    print("# of crits: " + str(crit_count))
     return crit_count
 
 ## Counts # of attacks made with user-input 'weaponName'.
 def parse_mainhand(openFile, weaponName):
     mainhand_count = 0
-    print weaponName
+    print(weaponName)
     for line in openFile:
         if line.find('with your ' + weaponName) != -1:
             mainhand_count += 1
-    print "# of mainhand hits: " + str(mainhand_count)
-
+    print("# of mainhand hits: " + str(mainhand_count))
 
 ## Counts # blocks, # misses, # parries, # evades, # hits taken. Prints results, along with %'s.
 def parse_defense(openFile):
@@ -151,24 +151,23 @@ def parse_defense(openFile):
             elif line.find('hits your') != -1:
                 hits_taken +=1
                 damage_text = line[line.find('damage')-9:line.find('damage')]
-##                print damage_text
                 if line.find('-') != -1 or line.find('+') != -1:
                     total_damage += int(damage_text.split()[len(damage_text.split())-2])
                 else:
                     total_damage += int(damage_text.split()[len(damage_text.split())-1])
             elif line.find('attacks you and misses') != -1:
                 misses += 1
-            total_attacks = block_count + parry_count + evade_count + hits_taken + misses
-        print "Defensive statistics:\n"
-        print "Total attacks received: " + str(total_attacks)
+        total_attacks = block_count + parry_count + evade_count + hits_taken + misses
+        print("Defensive statistics:\n")
+        print("Total attacks received: " + str(total_attacks))
         if total_attacks != 0:
-            print ("Block count: " + str(block_count) + "\n\tBlock %: " + str((float(block_count))/(float(total_attacks))) +
+            print(("Block count: " + str(block_count) + "\n\tBlock %: " + str((float(block_count))/(float(total_attacks))) +
                    "\nParry count: " + str(parry_count) + "\n\tParry %: " + str((float(parry_count))/(float(total_attacks)))+
                    "\nEvade Count " + str(evade_count) + "\n\tEvade %: " + str((float(evade_count))/(float(total_attacks)))+
                    "\nMiss count: " + str(misses) + "\n\tMiss %: " + str((float(misses))/(float(total_attacks))) +
-                   "\nHits taken: " + str(hits_taken)) + "\n\tHit %: " + str((float(hits_taken))/(float(total_attacks))) + "\nTotal damage taken: " + str(total_damage) + "\n"
+                   "\nHits taken: " + str(hits_taken)) + "\n\tHit %: " + str((float(hits_taken))/(float(total_attacks))) + "\nTotal damage taken: " + str(total_damage) + "\n")
     except ValueError or IndexError:
-        print line
+        print(line)
         exit(0)
 
 ## Executes parse_combat, parse_crit, and parse_defense.
@@ -178,30 +177,30 @@ def parse_allCombat(openFile):
     spell_count = parse_caster_combat(openFile)
     openFile.seek(0)
     crit_count = parse_crit(openFile)
-    print "Crit %: " + str(float(crit_count)/float(hit_count + spell_count)) + "\n"
+    print("Crit %: " + str(float(crit_count)/float(hit_count + spell_count)) + "\n")
     openFile.seek(0)
     parse_defense(openFile)
 
 ## Executes parse_money and parse_gold_loot.
 def parse_allMoney(openFile):
     parse_money(openFile)
-    print "\n"
+    print("\n")
     openFile.seek(0)
     parse_gold_loot(openFile)
 
 ## Executes parse_allCombat and parse_allMoney.
 def parse_all(openFile):
-    print "Combat statistics:\n"
+    print("Combat statistics:\n")
     parse_allCombat(openFile)
     openFile.seek(0)
-    print "Financial statistics: "
+    print("Financial statistics: ")
     parse_allMoney(openFile)
     
 def main() :
     try:
         if sys.argv[1] == 'help':
-            print ("Available options are: \nmeleeCombat, \ncasterCombat, \nMainhand <weaponName>, " +
-                "\nCrit, \nDefense, \nallCombat, \nMoney, \nlootMoney, \nallMoney, \nAll")
+            print(("Available options are: \nmeleeCombat, \ncasterCombat, \nMainhand <weaponName>, " +
+                "\nCrit, \nDefense, \nallCombat, \nMoney, \nlootMoney, \nallMoney, \nAll"))
         elif len(sys.argv) > 2:
             readf = open('./Log Files/' + sys.argv[1], 'r')
             if sys.argv[2] == "meleeCombat":
@@ -225,12 +224,21 @@ def main() :
             elif sys.argv[2] == 'All':
                 parse_all(readf)
             elif sys.argv[2] == 'help':
-                print ("Available options are: \nmeleeCombat, \ncasterCombat, \nMainhand <weaponName>, " +
-                       "\nCrit, \nDefense, \nallCombat, \nMoney, \nlootMoney, \nallMoney, \nAll")
+                print(("Available options are: \nmeleeCombat, \ncasterCombat, \nMainhand <weaponName>, " +
+                       "\nCrit, \nDefense, \nallCombat, \nMoney, \nlootMoney, \nallMoney, \nAll"))
             readf.close()
         else:
-            print "No method for parsing indicated topic. Please use argument 'help' for a list of available arguments."
+            print("No method for parsing indicated topic. Please use argument 'help' for a list of available arguments.")
     except IOError:
-        print "Failed to open "+ sys.argv[1]
+        print("Failed to open "+ sys.argv[1])
+
+# def create_app():
+#     """"""
+#     main_window = App(title="Log Parser", layout="grid")
+#     all_chkbox = CheckBox(main_window, text="All", grid=[0,0])
+#     all_combat_chkbox = CheckBox(main_window, text="All Combat", grid=[10,0])
+#     melee_combat_chkbox = CheckBox(main_window, text="Melee Combat", grid=[20,0])
+#     caster_combat_chkbox = CheckBox(main_window, text="Caster Combat", grid=[30,0])
+#     main_window.display()
 
 main()
