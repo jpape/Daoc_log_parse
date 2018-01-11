@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+
+table.scrollTable {
+    display:block;
+    overflow-y: auto;
+    height:100px;
+    table-layout:fixed;
+    width:100%;
+    border-collapse:collapse;
+}
+
+table.scrollTable td {
+    width:100%;
+}
+
+table {
+    width:100%;
+}

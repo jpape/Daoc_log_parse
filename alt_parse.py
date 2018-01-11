@@ -1,3 +1,10 @@
+"""Opens a saved chatlog from Dark Age of Camelot and parses various numbers
+    and stats from it"""
+__author__ = "robert.pape"
+__date__ = "2018/01/04"
+
+import json
+import operator
 
 GOLD_PICKUP_MESSAGE = 'You pick up'
 # [19:04:48] You pick up 1 gold, 5 silver and 61 copper pieces.
@@ -13,6 +20,9 @@ MELEE_OFFENSE_WEAPON_ATTACK_MESSAGE = 'with your'
 # [19:41:05] You attack the cave trow with your Grim Maul and hit for 96 damage!
 MELEE_OFFENSE_ATTACK_EVADE_MESSAGE = 'evades your attack'
 # [21:51:25] Thatguy evades your attack!
+MELEE_OFFENSE_ATTACK_PARRY_MESSAGE = 'parries your attack'
+MELEE_OFFENSE_ATTACK_BLOCK_MESSAGE = 'blocks your attack'
+MELEE_OFFENSE_ATTACK_MISS_MESSAGE = 'you miss'
 
 CASTER_OFFENSE_ATTACK_MESSAGE = 'You hit'
 # [21:57:40] You hit Aser for 269 (-14) damage! //Casted damage
@@ -35,57 +45,32 @@ MELEE_DEFENSE_DAMAGE_RECEIVED_MESSAGE = 'hits your'
 # [21:36:46] Krok hits your leg with his bright arcanium fortified mace for 102 damage!
 MELEE_DEFENSE_OPPONENT_MISS_MESSAGE = 'attacks you and misses'
 # [21:35:46] Krok attacks you and misses!
-MELEE_DEFENSE_OPPONENT_CRIT_MESSAGE = 'critical hits you for an additional'
+MELEE_DEFENSE_OPPONENT_CRIT_MESSAGE = 'critical hits you for an additionnal'
 # [21:51:42] Dacy critical hits you for an additionnal 19 damage!
+MELEE_DEFENSE_SPELL_PROC_MESSAGE = 'hits you for'
+# [21:25:47] Aser hits you for 150 damage !
+MELEE_BUFFER_ABSORB_MESSAGE = 'melee buffer absorbs'
+# [18:54:28] Your melee buffer absorbs 25 damage!
 
 CASTER_DEFENSE_SPELL_RESISTED_MESSAGE = 'You resist the effect'
 # [21:45:12] You resist the effect!
 
 HEALING_RECEIVED_MESSAGE = 'You are healed by'
 # [21:57:56] You are healed by Norseiaw for 85 hit points.
+HEALING_DELIVERED_MESSAGE = 'You heal'
+# [21:38:30] You heal the skeletal commander for 158 hit points!
+LIFETAP_HEALTH_STOLEN_MESSAGE = 'You steal'
+# [21:44:57] You steal 109 hit points.
 
-def collapse_comments():
-    print('boo')
-    # if sys.argv[1] == 'help':
-    #         print(("Available options are: \nmeleeCombat, \ncasterCombat, \nMainhand <weaponName>, " +
-    #             "\nCrit, \nDefense, \nallCombat, \nMoney, \nlootMoney, \nallMoney, \nAll"))
-    #     elif len(sys.argv) > 2:
-    #         readf = open('./Log Files/' + sys.argv[1], 'r')
-    #         if sys.argv[2] == "meleeCombat":
-    #             parse_melee_combat(readf)
-    #         elif sys.argv[2] == "casterCombat":
-    #             parse_caster_combat(readf)
-    #         elif sys.argv[2] == "Mainhand":
-    #             parse_mainhand(readf, sys.argv[3])
-    #         elif sys.argv[2] == 'Crit':
-    #             parse_crit(readf)
-    #         elif sys.argv[2] == 'Defense':
-    #             parse_defense(readf)
-    #         elif sys.argv[2] == 'allCombat':
-    #             parse_allCombat(readf)
-    #         elif sys.argv[2] == "Money":
-    #             parse_money(readf)
-    #         elif sys.argv[2] == 'lootMoney':
-    #             parse_gold_loot(readf)
-    #         elif sys.argv[2] == 'allMoney':
-    #             parse_allMoney(readf)
-    #         elif sys.argv[2] == 'All':
-    #             parse_all(readf)
-    #         elif sys.argv[2] == 'help':
-    #             print(("Available options are: \nmeleeCombat, \ncasterCombat, \nMainhand <weaponName>, " +
-    #                    "\nCrit, \nDefense, \nallCombat, \nMoney, \nlootMoney, \nallMoney, \nAll"))
-    #         readf.close()
-    #     else:
-    #         print("No method for parsing indicated topic. Please use argument 'help' for a list of available arguments.")
-
-##region Money Matters
 
 def parse_cash_flow(readf):
-    # [positive_inc, negative_inc]
+    """Parses money traded (received / payed) and looted"""
+    money = {}
     trade_money = parse_trade_money(readf)
-    # [looted_money]
-    loot_money = parse_loot_money(readf)
-    return [trade_money[0], trade_money[1], loot_money]
+    money['Income'] = trade_money[0]
+    money['Expense'] = trade_money[1]
+    money['Loot'] = parse_loot_money(readf)
+    return money
 
 def parse_trade_money(readf):
     """Counts the money paid/received."""
@@ -93,10 +78,10 @@ def parse_trade_money(readf):
     money_spent = 0
     money_gained = 0
     for line in readf:
-        if line.find('gives you') != -1:
-            money_gained = parse_money_denomination_from_line(line)
-        elif line.find('You just bought') != -1:
-            money_spent = parse_money_denomination_from_line(line)
+        if MONEY_RECEIVED_MESSAGE in line:
+            money_gained = parse_money_denomination(line)
+        elif MONEY_SPENT_MESSAGE in line:
+            money_spent = parse_money_denomination(line)
     plus_money = currency_breakdown(money_gained)
     minus_money = currency_breakdown(money_spent)
     return [plus_money, minus_money]
@@ -106,12 +91,12 @@ def parse_loot_money(readf):
     readf.seek(0)
     money_looted = 0
     for line in readf:
-        if line.find('You pick up') != -1 or line.find('for this kill') != -1:
-            money_looted = parse_money_denomination_from_line(line)
+        if GOLD_PICKUP_MESSAGE in line or GOLD_FOR_KILL_MESSAGE in line:
+            money_looted += parse_money_denomination(line)
     total_loot = currency_breakdown(money_looted)
     return total_loot
 
-def parse_money_denomination_from_line(line):
+def parse_money_denomination(line):
     """Finds each currency denomination and breaks it all down to copper"""
     money_total = 0
     if line.find('plat') != -1:
@@ -128,207 +113,442 @@ def parse_money_denomination_from_line(line):
     return money_total
 
 def currency_breakdown(total):
-    """Helper method to parse_money. Seperates 'total' into largest denominations and returns them in a list."""
-    plat = total/10000000
-    gold = (total%10000000)/10000
-    silver = (total%10000)/100
-    copper = (total%100)
+    """Helper method to parse_money. Seperates 'total' into
+    largest denominations and returns them in a list."""
+    plat = int(total/10000000)
+    gold = int((total%10000000)/10000)
+    silver = int((total%10000)/100)
+    copper = int(total%100)
     return [plat, gold, silver, copper]
-##endregion
 
 
-##region All Things Combat
+
 def parse_combat(readf):
-    # [hits, misses, evades, parries, blocks, damage]
-    melee_attack = parse_melee_attack(readf)
-    # [hits, resists, damage]
-    caster_combat = parse_caster_attack(readf)
-    # [blocks, parries, evades, misses, resists, hits, crits, crit_damage, total_damage, total_attacks]
-    defense_combat = parse_defense_combat(readf)
-    return [melee_attack, caster_combat, defense_combat]
+    """Parses attack and defense values"""
+    combat = {}
+    combat['MeleeAttack'] = parse_melee_attack(readf)
+    combat['CasterAttack'] = parse_caster_attack(readf)
+    combat['Defense'] = parse_defense_combat(readf)
+
+    return combat
 
 def parse_melee_attack(readf):
     """Counts and returns the # of successful attacks with both hands"""
     readf.seek(0)
-    hit_count = 0
-    total_damage = 0
-    #TODO: What do these look like?
-    miss_count = 0 
-    evade_count = 0
-    parry_count = 0
-    block_count = 0
-
+    result = {}
+    targets = {}
+    result['Targets'] = []
+    result['Hits'] = 0
+    result['BaseDamage'] = 0
+    result['Crits'] = 0
+    result['CritDamage'] = 0
+    result['Evades'] = 0
+    result['Parries'] = 0
+    result['Blocks'] = 0
+    #TODO: What does this look like?
+    result['Misses'] = 0
     for line in readf:
-        try:
-            if line.find('You attack') != -1 and line.find('with your') != -1:
-                hit_count += 1
-                damage_text = line[line.find('damage')-16:line.find('damage')]
-                # If there's a damage augment (resist or weakness) it changes the offset
-                if line.find('-') != -1 or line.find('+') != -1:
-                    total_damage += int(damage_text.split()[len(damage_text.split())-2])
-                else:
-                    total_damage += int(damage_text.split()[len(damage_text.split())-1])
-        except IndexError:
-            print(str(line))
-            exit(0)
-    return [hit_count, miss_count, evade_count, parry_count, block_count, total_damage]
+        if MELEE_OFFENSE_ATTACK_MESSAGE in line and MELEE_OFFENSE_WEAPON_ATTACK_MESSAGE in line:
+            result['Hits'] += 1
+            damage_and_target = parse_damage_and_target(line)
+            result['BaseDamage'] += damage_and_target[0]
+            if damage_and_target[1] in targets.keys():
+                targets[damage_and_target[1]] += damage_and_target[0]
+            else:
+                targets[damage_and_target[1]] = damage_and_target[0]
+        elif CRITICAL_HIT_OFFENSE_MESSAGE in line:
+            result['Crits'] += 1
+            damage_and_target = parse_damage_and_target(line)
+            result['CritDamage'] += damage_and_target[0]
+            if damage_and_target[1] in targets.keys():
+                targets[damage_and_target[1]] += damage_and_target[0]
+            else:
+                targets[damage_and_target[1]] = damage_and_target[0]
+        elif MELEE_OFFENSE_ATTACK_EVADE_MESSAGE in line:
+            result['Evades'] += 1
+        elif MELEE_OFFENSE_ATTACK_PARRY_MESSAGE in line:
+            result['Parries'] += 1
+        elif MELEE_OFFENSE_ATTACK_BLOCK_MESSAGE in line:
+            result['Blocks'] += 1
+        elif MELEE_OFFENSE_ATTACK_MISS_MESSAGE in line:
+            result['Misses'] += 1
+
+    result['Targets'] = sorted(targets.items(), key=operator.itemgetter(1), reverse=True)
+
+    result['TotalAttacks'] = result['Hits'] + result['Misses'] + \
+        result['Evades'] + result['Parries'] + result['Blocks']
+    result['TotalDamage'] = result['BaseDamage'] + result['CritDamage']
+    return result
 
 def parse_caster_attack(readf):
-    """Parses the log file for casting statistics"""
+    """Parses the log file for casting statistics.
+    This includes spells + procs until I figure out how to differentiate them."""
     readf.seek(0)
-    spells_landed = 0
-    resist_count = 0
-    total_damage = 0
+    result = {}
+    targets = {}
+    result['Targets'] = {}
+    result['Landed'] = 0
+    result['Crits'] = 0
+    result['Resists'] = 0
+    result['BaseDamage'] = 0
+    result['CritDamage'] = 0
     for line in readf:
-        try:
-            if line.find('You hit') != -1 and line.find('you attack') == -1:
-                spells_landed += 1
-                damage_text = line[line.find('damage')-16:line.find('damage')]
+        if CASTER_OFFENSE_ATTACK_MESSAGE in line and MELEE_OFFENSE_ATTACK_MESSAGE not in line:
+            result['Landed'] += 1
+            damage_and_target = parse_damage_and_target(line)
+            result['BaseDamage'] += damage_and_target[0]
+            if damage_and_target[1] in targets.keys():
+                targets[damage_and_target[1]] += damage_and_target[0]
+            else:
+                targets[damage_and_target[1]] = damage_and_target[0]
+        elif CRITICAL_HIT_SPELL_MESSAGE in line:
+            result['Crits'] += 1
+            damage_and_target = parse_damage_and_target(line)
+            result['CritDamage'] += damage_and_target[0]
+            if damage_and_target[1] in targets.keys():
+                targets[damage_and_target[1]] += damage_and_target[0]
+            else:
+                targets[damage_and_target[1]] = damage_and_target[0]
+        elif CASTER_OFFENSE_SPELL_RESIST_MESSAGE in line:
+            result['Resists'] += 1
 
-                if line.find('-') != -1 or line.find('+') != -1:
-                    total_damage += int(damage_text.split()[len(damage_text.split())-2])
-                else:
-                    total_damage += int(damage_text.split()[len(damage_text.split())-1])
-            if line.find('resists the effect') != -1:
-                resist_count += 1
-        except IndexError:
-            print(str(line))
-            exit(0)
-    return [spells_landed, resist_count, total_damage]
+    result['Targets'] = sorted(targets.items(), key=operator.itemgetter(1), reverse=True)
 
+    result['TotalDamage'] = result['BaseDamage'] + result['CritDamage']
+    result['TotalAttacks'] = result['Landed'] + result['Resists']
+    return result
+
+## TODO: Can we differentiate between spells and procs?
 def parse_defense_combat(readf):
-    """Counts # blocks, # misses, # parries, # evades, # hits taken. Prints results, along with %'s."""
-
+    """Parses attacks against the player."""
     readf.seek(0)
-    # Get critical hits in here somewhere
-    block_count = 0
-    parry_count = 0
-    evade_count = 0
-    hits_count = 0
-    total_damage = 0
-    total_attacks = 0
-    miss_count = 0
-    resist_count = 0
-    crit_count = 0
-    crit_damage = 0
-    try:
-        for line in readf:
-            
-            if MELEE_DEFENSE_BLOCK_MESSAGE in line:
-                block_count +=1
-            elif MELEE_DEFENSE_PARRY_MESSAGE in line:
-                parry_count +=1
-            elif MELEE_DEFENSE_EVADE_MESSAGE in line:
-                evade_count +=1
-            elif CASTER_DEFENSE_SPELL_RESISTED_MESSAGE in line:
-                resist_count += 1
-            elif MELEE_DEFENSE_OPPONENT_MISS_MESSAGE in line:
-                miss_count += 1
-            elif MELEE_DEFENSE_DAMAGE_RECEIVED_MESSAGE in line:
-                hits_count +=1
-                damage_text = line[line.find('damage')-9:line.find('damage')]
-                if line.find('-') != -1 or line.find('+') != -1:
-                    total_damage += int(damage_text.split()[len(damage_text.split())-2])
-                else:
-                    total_damage += int(damage_text.split()[len(damage_text.split())-1])
-            elif MELEE_DEFENSE_OPPONENT_CRIT_MESSAGE in line:
-                crit_count += 1
-                damage_text = line[line.find('damage')-9:line.find('damage')]
-                crit_damage += int(damage_text.split()[len(damage_text.split())-1])
-        total_attacks = block_count + parry_count + evade_count + hits_count + miss_count
-        # print("Defensive statistics:\n")
-        # print("Total attacks received: " + str(total_attacks))
-        # if total_attacks != 0:
-        #     print(("Block count: " + str(block_count) + "\n\tBlock %: " + str((float(block_count))/(float(total_attacks))) +
-        #             "\nParry count: " + str(parry_count) + "\n\tParry %: " + str((float(parry_count))/(float(total_attacks)))+
-        #             "\nEvade Count " + str(evade_count) + "\n\tEvade %: " + str((float(evade_count))/(float(total_attacks)))+
-        #             "\nMiss count: " + str(miss_count) + "\n\tMiss %: " + str((float(miss_count))/(float(total_attacks))) +
-        #             "\nHits taken: " + str(hits_count)) + "\n\tHit %: " + str((float(hits_count))/(float(total_attacks))) + "\nTotal damage taken: " + str(total_damage) + "\n")
-    except ValueError or IndexError:
-        print(line)
-        exit(0)
-    return [block_count, parry_count, evade_count, miss_count, resist_count, hits_count, crit_count, crit_damage, total_damage, total_attacks]
-
-def parse_crit(readf):
-    """Counts and returns the # of critical hits inflicted"""
-    readf.seek(0)
-    crit_count = 0
-    crit_damage = 0
+    result = {}
+    sources = {}
+    result['Sources'] = []
+    result['Blocks'] = 0
+    result['Parries'] = 0
+    result['Evades'] = 0
+    result['Hits'] = 0
+    result['MeleeDamage'] = 0
+    result['Misses'] = 0
+    result['Resists'] = 0
+    result['Crits'] = 0
+    result['CritDamage'] = 0
+    result['Absorbed'] = 0
+    result['SpellsLanded'] = 0
+    result['SpellDamage'] = 0
     for line in readf:
-        if line.find('You critical hit') != -1:
-            crit_count += 1
-            damage_text = line[line.find('damage')-9:line.find('damage')]
-            crit_damage += int(damage_text.split()[len(damage_text.split())-1])
-    return [crit_count, crit_damage]
+        if MELEE_DEFENSE_BLOCK_MESSAGE in line:
+            result['Blocks'] += 1
+        elif MELEE_DEFENSE_PARRY_MESSAGE in line:
+            result['Parries'] += 1
+        elif MELEE_DEFENSE_EVADE_MESSAGE in line:
+            result['Evades'] += 1
+        elif CASTER_DEFENSE_SPELL_RESISTED_MESSAGE in line:
+            result['Resists'] += 1
+        elif MELEE_DEFENSE_OPPONENT_MISS_MESSAGE in line:
+            result['Misses'] += 1
+        elif MELEE_DEFENSE_DAMAGE_RECEIVED_MESSAGE in line:
+            result['Hits'] += 1
+            damage_and_source = parse_damage_and_source(line)
+            result['MeleeDamage'] += damage_and_source[0]
+            if damage_and_source[1] in sources.keys():
+                sources[damage_and_source[1]] += damage_and_source[0]
+            else:
+                sources[damage_and_source[1]] = damage_and_source[0]
+        elif MELEE_DEFENSE_OPPONENT_CRIT_MESSAGE in line:
+            result['Crits'] += 1
+            damage_and_source = parse_damage_and_source(line)
+            result['CritDamage'] += damage_and_source[0]
+            if damage_and_source[1] in sources.keys():
+                sources[damage_and_source[1]] += damage_and_source[0]
+            else:
+                sources[damage_and_source[1]] = damage_and_source[0]
+        elif MELEE_DEFENSE_SPELL_PROC_MESSAGE in line:
+            result['SpellsLanded'] += 1
+            damage_and_source = parse_damage_and_source(line)
+            result['SpellDamage'] += damage_and_source[0]
+            if damage_and_source[1] in sources.keys():
+                sources[damage_and_source[1]] += damage_and_source[0]
+            else:
+                sources[damage_and_source[1]] = damage_and_source[0]
+        elif MELEE_BUFFER_ABSORB_MESSAGE in line:
+            result['Absorbed'] += parse_healing_and_source(line)[0]
+
+    result['Sources'] = sorted(sources.items(), key=operator.itemgetter(1), reverse=True)
+
+    result['TotalMeleeAttacks'] = result['Blocks'] + result['Parries'] + result['Evades'] + \
+        result['Hits'] + result['Misses']
+
+    result['TotalSpellAttacks'] = result['Resists'] + result['SpellsLanded']
+
+    result['TotalAttacks'] = result['TotalMeleeAttacks'] + result['TotalSpellAttacks']
+    
+    result['TotalDamage'] = result['MeleeDamage'] + result['CritDamage'] + result['SpellDamage']
+
+    return result
 
 
-def parse_mainhand(line, weaponName):
-    """Counts # of attacks made with user-input 'weaponName'."""
-    mainhand_count = 0
-    print(weaponName)
-    if line.find('with your ' + weaponName) != -1:
-        mainhand_count += 1
-    print("# of mainhand hits: " + str(mainhand_count))
-##endregion
+def parse_damage_and_source(line):
+    """Helper method that finds the amount of damage and who it was dealt by"""
+    split_line = line.split()
+    source = ''
+
+    is_name_part = True
+    for word in split_line[1:]:
+        if word == 'hits' or word == 'critical':
+            is_name_part = False
+        elif is_name_part:
+            source += word + ' '
+    source = source.replace('The ', '')
+
+    for word in split_line:
+        num = 0
+        try:
+            num = int(word)
+        except ValueError:
+            continue
+        if num > 0:
+            return [num, source]
+
+    return [num, source]
+
+def parse_damage_and_target(line):
+    """Helper method that finds the amount of damage and who it was dealt to"""
+    split_line = line.split()
+    target = ''
+
+    is_name_part = False
+    for word in split_line:
+        if word == 'for' or word == 'with':
+            is_name_part = False
+        elif is_name_part:
+            target += word + ' '
+        elif word == 'hit' or word == 'attack':
+            is_name_part = True
+    target = target.replace('the ', '')
+    if target == '':
+        target = '<Unassigned crits>'
+
+    for word in split_line:
+        num = 0
+        try:
+            num = int(word)
+        except ValueError:
+            continue
+        if num > 0:
+            return [num, target]
+
+    return [num, target]
 
 
-def main() :
+def parse_healing(readf):
+    """Parses healing Received and Delivered. Includes LifeTap"""
+    readf.seek(0)
+    healing = {}
+    sources = {}
+    targets = {}
+    healing['Sources'] = []
+    healing['Targets'] = []
+    healing['Received'] = 0
+    healing['Lifetapped'] = 0
+    healing['Delivered'] = 0
+    for line in readf:
+        if HEALING_RECEIVED_MESSAGE in line:
+            healing_and_source = parse_healing_and_source(line)
+            healing['Received'] += healing_and_source[0]
+            if healing_and_source[1] in sources.keys():
+                sources[healing_and_source[1]] += healing_and_source[0]
+            else:
+                sources[healing_and_source[1]] = healing_and_source[0]
+        if LIFETAP_HEALTH_STOLEN_MESSAGE in line:
+            healing['Lifetapped'] += parse_healing_and_source(line)[0]
+        if HEALING_DELIVERED_MESSAGE in line:
+            healing_and_target = parse_healing_and_target(line)
+            healing['Delivered'] += healing_and_target[0]
+            if healing_and_target[1] in targets.keys():
+                targets[healing_and_target[1]] += healing_and_target[0]
+            else:
+                targets[healing_and_target[1]] = healing_and_target[0]
+
+    healing['Sources'] = sorted(sources.items(), key=operator.itemgetter(1), reverse=True)
+    healing['Targets'] = sorted(targets.items(), key=operator.itemgetter(1), reverse=True)
+    
+    return healing
+
+def parse_healing_and_source(line):
+    """Helper method that finds amount of healing and character providing it"""
+    split_line = line.split()
+    source = ''
+
+    is_name_part = False
+    for word in split_line:
+        if word == 'for':
+            is_name_part = False
+        elif is_name_part:
+            source += word + ' '
+        elif word == 'by':
+            is_name_part = True
+    source = source.replace('the ', '')
+
+    for word in split_line:
+        num = 0
+        try:
+            num = int(word)
+        except ValueError:
+            continue
+        if num > 0:
+            return [num, source]
+
+    return [num, source]
+
+def parse_healing_and_target(line):
+    """Helper method that finds the amount of healing and who it was provided to"""
+    split_line = line.split()
+    target = ''
+
+    is_name_part = False
+    for word in split_line:
+        if word == 'for':
+            is_name_part = False
+        elif is_name_part:
+            target += word + ' '
+        elif word == 'heal':
+            is_name_part = True
+    target = target.replace('the ', '')
+
+    for word in split_line:
+        num = 0
+        try:
+            num = int(word)
+        except ValueError:
+            continue
+        if num > 0:
+            return [num, target]
+
+    return [num, target]
+
+
+
+def print_healing(healing):
+    """Prints out the values from the <healing> dictionary"""
+    print('%&%&%&%&%&%& Healing stats %&%&%&%&%&%&')
+    for key, value in healing.items():
+        if key != 'Sources' and key != 'Targets':
+            print(key + ': ' + '{:,}'.format(value))
+    print('++++Healed By++++')
+    for key, value in healing['Sources'].items():
+        print('\t' + key + ': ' + '{:,}'.format(value))
+    print('++++Healing Given++++')
+    for key, value in healing['Targets'].items():
+        print('\t' + key + ': ' + '{:,}'.format(value))
+
+def print_combat(combat):
+    """Prints out the values from the <combat> dictionary"""
+    print('=|====> COMBAT DATA <====|=')
+    print('----> Offensive stats: <----')
+    print('===[] Melee []===')
+    for key, value in combat['Melee_attack'].items():
+        if key != 'Targets':
+            print(key + ': ' + '{:,}'.format(value))
+    print('----Individual targets----')
+    for key, value in combat['Melee_attack']['Targets'].items():
+        print('\t' + key + ': ' + '{:,}'.format(value))
+    print('\n')
+
+
+    print('**** Casting/proc stats ****')
+    for key, value in combat['Caster_attack'].items():
+        if key != 'Targets':
+            print(key + ': ' + '{:,}'.format(value))
+    print('----Individual Targets----')
+    for key, value in combat['Caster_attack']['Targets'].items():
+        print('\t' + key + ': ' + '{:,}'.format(value))
+    print('\n')
+
+    print('||||| Defensive stats |||||')
+    for key, value in combat['Defense'].items():
+        if key != 'Sources':
+            print(key + ': ' + '{:,}'.format(value))
+    print('++++Individual attackers++++')
+    for key, value in combat['Defense']['Sources'].items():
+        print('\t' + key + ': ' + '{:,}'.format(value))
+    print('\n')
+
+def print_money(cash_flow):
+    """Prints out the values from the <cash_flow> dictionary"""
+    print('\n\n$$$$ CASH FLOW $$$$')
+    print('Money looted: ' + currency_print_helper(cash_flow['Loot']))
+    print('Money spent: ' + currency_print_helper(cash_flow['Expense']))
+    print('Money received: ' + currency_print_helper(cash_flow['Income']))
+    print('\n\n')
+
+
+def parse_test_file():
+    """Main function"""
+    result = {}
     try:
-        with open('./Log Files/Thid.log', 'r') as readf:
+        with open('./Log Files/miri_0108.log', 'r') as readf:
             cash_flow = parse_cash_flow(readf)
-            print('$$$$ CASH FLOW $$$$')
-            print('Money looted: ' + currency_print_helper(cash_flow[2]))
-            print('Money spent: ' + currency_print_helper(cash_flow[1]))
-            print('Money received: ' + currency_print_helper(cash_flow[0]))
-            print('\n\n')
-            
             combat = parse_combat(readf)
-            print('=|====> COMBAT DATA <====|=')
-            print('----> Offensive stats: <----')
-            print('===[] Melee []===')
-            print('Hits: ' + str(combat[0][0]))
-            print('Misses: ' + str(combat[0][1]))
-            print('Evades: ' + str(combat[0][2]))
-            print('Parries: ' + str(combat[0][3]))
-            print('Blocks: ' + str(combat[0][4]))
-            print('Damage: ' + str(combat[0][5]))
-            print('\n')
+            healing = parse_healing(readf)
 
-            print('**** Casting/proc stats ****')
-            print('Hits: ' + str(combat[1][0]))
-            print('Resists: ' + str(combat[1][1]))
-            print('Total damage: ' + str(combat[1][2]))
-            print('\n')
+            # print_money(cash_flow)
+            # print_combat(combat)
+            # print_healing(healing)
+            # print('\n\n')
 
-            print('||||| Defensive stats |||||')
-            print('Blocks: ' + str(combat[2][0]))
-            print('Parries: ' + str(combat[2][1]))
-            print('Evades: ' + str(combat[2][2]))
-            print('Misses: ' + str(combat[2][3]))
-            print('Resists: ' + str(combat[2][4]))
-            print('Hits: ' + str(combat[2][5]))
-            print('Crits: ' + str(combat[2][6]))
-            print('Crit dmg: ' + str(combat[2][7]))
-            print('Total dmg: ' + str(combat[2][8]))
-            print('Total attacks: ' + str(combat[2][9]))
-            print('\n\n')
+        result['Cash'] = cash_flow
+        result['Combat'] = combat
+        result['Healing'] = healing
 
-
+        j_result = json.dumps(result)
+        print(j_result)
+        
+        # return j_result
 
     except IOError:
         print("Failed to open file")
+        exit(0)
+
+def parse_uploaded_file(readf):
+    result = {}
+    try:
+        # with open(file, 'r') as readf:
+        cash_flow = parse_cash_flow(readf)
+        combat = parse_combat(readf)
+        healing = parse_healing(readf)
+
+            # print_money(cash_flow)
+            # print_combat(combat)
+            # print_healing(healing)
+            # print('\n\n')
+
+        result['Cash'] = cash_flow
+        result['Combat'] = combat
+        result['Healing'] = healing
+        j_result = json.dumps(result)
+        # print(j_result)
+        
+        return j_result
+
+    except IOError:
+        print("Failed to open file")
+        exit(0)
 
 def currency_print_helper(currency_dict):
+    """Helper method for printing currency prettily"""
     result_text = ''
     if currency_dict[0] > 0:
         result_text += str(currency_dict[0]) + 'p '
     if currency_dict[1] > 0:
-        result_text += str(currency_dict[0]) + 'g '
+        result_text += str(currency_dict[1]) + 'g '
     if currency_dict[2] > 0:
-        result_text += str(currency_dict[0]) + 's '
+        result_text += str(currency_dict[2]) + 's '
     if currency_dict[3] > 0:
-        result_text += str(currency_dict[0]) + 'c '
-    
+        result_text += str(currency_dict[3]) + 'c'
+
     return result_text
 
-main()
+
+# parse_test_file()

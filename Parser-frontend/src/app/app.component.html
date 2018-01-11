@@ -1,0 +1,421 @@
+<div style="padding-left:4ch; padding-top: 4ch">
+    <!-- <div>
+        <file-drop headertext="Drop files here" (onFileDrop)="onFileUploaded($event)">
+        </file-drop>
+    </div> -->
+
+    <input type="file" (change)="fileChange($event)" placeholder="Upload file" accept=".log, .txt">
+
+    <div>
+        <h1><b>Parse Results</b></h1>
+    </div>
+
+    <div class="container-fluid">
+        <form [formGroup]="parsedLogForm" class="form-group">
+            <div class="row">
+                <div class="col-sm-2">
+                    <h3 class="panel-heading">Money</h3>
+                        <!-- <div>
+                            <div>
+                                <label for="loot">Looted: </label>
+                                    {{currencyPrintHelper(resultsForPage.Cash.Loot)}}
+                            </div>
+                            <div>
+                                <label for="expense">Expenses: </label>
+                                    {{currencyPrintHelper(resultsForPage.Cash.Expense)}}
+                            </div>
+                            <div>
+                                <label for="income">Income: </label>
+                                    {{currencyPrintHelper(resultsForPage.Cash.Income)}}
+                            </div>
+                        </div> -->
+                        <table style="width: 100%">
+                            <tr>
+                                <td><strong>Looted:</strong></td>
+                                <td style="text-align: right">{{currencyPrintHelper(resultsForPage.Cash.Loot)}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Expenses:</strong></td>
+                                <td style="text-align: right">{{currencyPrintHelper(resultsForPage.Cash.Expense)}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Income:</strong></td>
+                                <td style="text-align: right">{{currencyPrintHelper(resultsForPage.Cash.Income)}}</td>
+                            </tr>
+                        </table>
+                </div>
+                <div class="col-sm-2">
+                    <h3 class="panel-heading">Healing</h3>
+                        <!-- <div>
+                            <div>
+                                <label for="healing-delivered">Delivered: </label>
+                                    {{resultsForPage.Healing.Delivered}}
+                            </div>
+                            <div>
+                                <label for="healing-received">Received: </label>
+                                    {{resultsForPage.Healing.Received}}
+                            </div>
+                            <div>
+                                <label for="healing-lifetapped">Lifetapped: </label>
+                                    {{resultsForPage.Healing.Lifetapped}}
+                            </div>
+                            <div>
+                                <label for="healing-targets">Targets: </label>
+                                <ul id="healing-targets">
+                                    <li *ngFor="let target of resultsForPage.Healing.Targets">{{target}}</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <label for="healing-sources">Sources: </label>
+                                <ul id="healing-targets">
+                                    <li *ngFor="let source of resultsForPage.Healing.Sources">{{source}}</li>
+                                </ul>
+                            </div>
+                        </div> -->
+                        <table>
+                            <tr>
+                                <td><strong>Delivered:</strong></td>
+                                <td style="text-align: right">{{resultsForPage.Healing.Delivered | number}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Received:</strong></td>
+                                <td style="text-align: right">{{resultsForPage.Healing.Received | number}}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lifetapped:</strong></td>
+                                <td style="text-align: right">{{resultsForPage.Healing.Lifetapped | number}}</td>
+                            </tr>
+                        </table>
+                        <h5><strong>Delivered breakdown:</strong></h5>
+                        <table class="scrollTable">
+                            <tr *ngFor="let target of resultsForPage.Healing.Targets">
+                                <td>{{target[0]}}</td>
+                                <td style="text-align:right">{{target[1] | number}}</td>
+                            </tr>
+                        </table>
+                        <h5><strong>Received breakdown:</strong></h5>
+                        <table class="scrollTable">
+                            <tr *ngFor="let source of resultsForPage.Healing.Sources">
+                                <td>{{source[0]}}</td>
+                                <td style="text-align:right">{{source[1] | number}}</td>
+                            </tr>
+                        </table>
+                </div>
+            </div>
+            <div class="row">
+                <h3>Combat</h3>
+                <div class="panel-default panel">
+                    <div class="col-sm-2">
+                        <h4>Melee Attack</h4>
+                            <!-- <div>
+                                <div>
+                                    <label for="attack-melee-hits">Hits: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.Hits}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-misses">Misses: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.Misses}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-evades">Evades: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.Evavdes}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-parries">Parries: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.Parries}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-blocks">Blocks: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.Blocks}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-crits">Critical Hits: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.Crits}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-crit-damage">Critical Damage: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.CritDamage}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-base-damage">Base Damage: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.BaseDamage}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-total-attacks">Total Attacks: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.TotalAttacks}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-total-damage">Total Damage: </label>
+                                        {{resultsForPage.Combat.MeleeAttack.TotalDamage}}
+                                </div>
+                                <div>
+                                    <label for="attack-melee-targets">Targets: </label>
+                                    <ul id="attack-melee-targets">
+                                        <li *ngFor="let target of resultsForPage.Combat.MeleeAttack.Targets">{{target}}</li>
+                                    </ul>
+                                </div>
+                            </div> -->
+                            <table>
+                                <tr>
+                                    <td><strong>Hits:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.Hits | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Blocks:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.Blocks | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Parries:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.Parries | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Evades:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.Evades | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Misses:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.Misses | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Attacks:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.TotalAttacks | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Base Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.BaseDamage | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Crits:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.Crits | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Crit Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.CritDamage | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.MeleeAttack.TotalDamage | number}}</td>
+                                </tr>
+                            </table>
+                            <h5><strong>Damage Breakdown:</strong></h5>
+                            <table class="scrollTable">
+                                <tr *ngFor="let dmgTarget of resultsForPage.Combat.MeleeAttack.Targets">
+                                    <td>{{dmgTarget[0]}}</td>
+                                    <td style="text-align: right">{{dmgTarget[1] | number}}</td>
+                                </tr>
+                            </table>
+                    </div>
+                    <div class="col-sm-2">
+                        <h4>Caster Attack</h4>
+                            <!-- <div>
+                                <div>
+                                    <label for="attack-spells-landed">Hits: </label>
+                                        {{resultsForPage.Combat.CasterAttack.Landed}}
+                                </div>
+                                <div>
+                                    <label for="attack-spells-resisted">Resisted: </label>
+                                        {{resultsForPage.Combat.CasterAttack.Resisted}}
+                                </div>
+                                <div>
+                                    <label for="attack-spells-crits">Critical Hits: </label>
+                                        {{resultsForPage.Combat.CasterAttack.Crits}}
+                                </div>
+                                <div>
+                                    <label for="attack-spells-base-damage">Damage: </label>
+                                        {{resultsForPage.Combat.CasterAttack.BaseDamage}}
+                                </div>
+                                <div>
+                                    <label for="attack-spells-crit-damage">Crit Damage: </label>
+                                        {{resultsForPage.Combat.CasterAttack.CritDamage}}
+                                </div>
+                                <div>
+                                    <label for="attack-spells-total-damage">Total Damage: </label>
+                                        {{resultsForPage.Combat.CasterAttack.TotalDamage}}
+                                </div>
+                                <div>
+                                    <label for="attack-spells-targets">Targets: </label>
+                                    <ul id="attack-spells-targets">
+                                        <li *ngFor="let target of resultsForPage.Combat.CasterAttack.Targets">{{target}}</li>
+                                    </ul>
+                                </div>
+                            </div> -->
+                            <table>
+                                <tr>
+                                    <td><strong>Hits:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.CasterAttack.Landed | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Resists:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.CasterAttack.Resists | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>TotalAttacks:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.CasterAttack.TotalAttacks | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Base Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.CasterAttack.BaseDamage | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Crits:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.CasterAttack.Crits | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Crit Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.CasterAttack.CritDamage | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.CasterAttack.TotalDamage | number}}</td>
+                                </tr>
+                            </table>
+                            <h5><strong>Damage Breakdown:</strong></h5>
+                            <table class="scrollTable">
+                                <tr *ngFor="let dmgTarget of resultsForPage.Combat.CasterAttack.Targets">
+                                    <td>{{dmgTarget[0]}}</td>
+                                    <td style="text-align: right">{{dmgTarget[1] | number}}</td>
+                                </tr>
+                            </table>
+                    </div>
+                    <div class="col-sm-2">
+                        <h4>Defense</h4>
+                            <!-- <div>
+                                <div>
+                                    <label for="defense-hits">Hits: </label>
+                                        {{resultsForPage.Combat.Defense.Hits}}
+                                </div>
+                                <div>
+                                    <label for="defense-blocks">Blocks: </label>
+                                        {{resultsForPage.Combat.Defense.Blocks}}
+                                </div>
+                                <div>
+                                    <label for="defense-evades">Evades: </label>
+                                        {{resultsForPage.Combat.Defense.Evades}}
+                                </div>
+                                <div>
+                                    <label for="defense-parries">Parries: </label>
+                                        {{resultsForPage.Combat.Defense.Parries}}
+                                </div>
+                                <div>
+                                    <label for="defense-misses">Misses: </label>
+                                        {{resultsForPage.Combat.Defense.Misses}}
+                                </div>
+                                <div>
+                                    <label for="defense-resists">Resists: </label>
+                                        {{resultsForPage.Combat.Defense.Resists}}
+                                </div>
+                                <div>
+                                    <label for="defense-total-attacks">Total Attacks: </label>
+                                        {{resultsForPage.Combat.Defense.TotalAttacks}}
+                                </div>
+                                <div>
+                                    <label for="defense-melee-damage">Melee Damage: </label>
+                                        {{resultsForPage.Combat.Defense.MeleeDamage}}
+                                </div>
+                                <div>
+                                    <label for="defense-crits">Critical Hits: </label>
+                                        {{resultsForPage.Combat.Defense.Crits}}
+                                </div>
+                                <div>
+                                    <label for="defense-crit-damage">Critical Damage: </label>
+                                        {{resultsForPage.Combat.Defense.CritDamage}}
+                                </div>
+                                <div>
+                                    <label for="defense-absorbs">Damage Absorbed: </label>
+                                        {{resultsForPage.Combat.Defense.Absorbed}}
+                                </div>
+                                <div>
+                                    <label for="defense-spells-landed">Spells/Procs: </label>
+                                        {{resultsForPage.Combat.Defense.SpellsLanded}}
+                                </div>
+                                <div>
+                                    <label for="defense-spell-damage">Spell Damage: </label>
+                                        {{resultsForPage.Combat.Defense.SpellDamage}}
+                                </div>
+                                <div>
+                                    <label for="defense-total-damage">Total Damage: </label>
+                                        {{resultsForPage.Combat.Defense.TotalDamage}}
+                                </div>
+                                <div>
+                                    <label for="defense-sources">Damage Sources: </label>
+                                    <ul id="defense-sources">
+                                        <li *ngFor="let source of resultsForPage.Combat.Defense.Sources">{{source}}</li>
+                                    </ul>
+                                </div>
+                            </div> -->
+                            <table>
+                                <tr>
+                                    <td><strong>Hits:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Hits | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Blocks:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Blocks | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Parries:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Parries | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Evades:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Evades | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Misses:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Misses | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tot Melee Attacks:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.TotalMeleeAttacks | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Crits:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Crits | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Crit Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.CritDamage | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Melee Damage:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.TotalDamage | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Absorbed:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Absorbed | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Spells/Procs:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.SpellsLanded | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Resists:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.Resists | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tot Magic Attacks:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.TotalSpellAttacks | number}}</td>
+                                </tr>    
+                                <tr>
+                                    <td><strong>Spell Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.SpellDamage | number}}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total Dmg:</strong></td>
+                                    <td style="text-align:right">{{resultsForPage.Combat.Defense.TotalDamage | number}}</td>
+                                </tr>
+                            </table>
+                            <h5><strong>Damage Breakdown:</strong></h5>
+                            <table class="scrollTable">
+                                <tr *ngFor="let dmgSource of resultsForPage.Combat.Defense.Sources">
+                                    <td>{{dmgSource[0]}}</td>
+                                    <td style="text-align: right">{{dmgSource[1] | number}}</td>
+                                </tr>
+                            </table>
+                    </div>
+                </div>
+                
+            </div>
+        </form>
+    </div>
+</div>
